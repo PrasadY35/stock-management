@@ -4,28 +4,22 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # Serve stock page
+    return render_template('index.html')
 
 @app.route('/stocks')
 def show_stock():
-    return """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Stock List</title>
-</head>
-<body>
-    <h1>📦 Available Stock</h1>
-    <pre id="stock-page">
-        <script>
-            document.write(localStorage.getItem("stockPage") || "No stock available.");
-        </script>
-    </pre>
-</body>
-</html>
-"""  # This dynamically loads stock data from localStorage
+    stock_data = """
+Product Name: Urea Fertilizer
+Quantity: 50 bags
+Description: High-quality nitrogen fertilizer
+
+Product Name: DAP Fertilizer
+Quantity: 30 bags
+Description: Phosphate-rich fertilizer for crops
+    """
+    return f"<pre>{stock_data}</pre>"
 
 if __name__ == '__main__':
     import os
-    port = int(os.environ.get("PORT", 8080S))  # Railway provides PORT env variable
+    port = int(os.environ.get("PORT", 5000))  # Railway provides PORT dynamically
     app.run(debug=True, host="0.0.0.0", port=port)
