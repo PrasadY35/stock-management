@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        document.addEventListener("DOMContentLoaded", loadStock);
+
+        function showAdminPanel(action, stockId = null) {
+            let password = prompt("Enter Admin Password:");
+            if (password === "20102010") {
+                if (action === "add") {
+                    document.getElementById("admin-panel").style.display = "block";
+                } else if (action === "edit") {
+                    editStock(stockId);
+                } else if (action === "delete") {
+                    deleteStock(stockId);
+                }
+            } else {
+                alert("Incorrect password! Access Denied.");
+            }
+        }
+
+        function loadStock() {
+            let stockData = JSON.parse(localStorage.getItem("stock")) || [];
+            let stockList = document.getElementById("stock-data");
+            let stockPage = document.getElementById("stock-page");
+
+            stockList.innerHTML = "";
+            stockPage.innerHTML = "";
+
+            stockData.forEach((item, index) => {
+                stockList.innerHTML += `
+<div id="stock-${index}" class="stock-item">
+    <p><b>Product Name:</b> ${item.name}</p>
+    <p><b>Quantity:</b> ${item.quantity}</p>
+    <p><b>Description:</b> ${item.description}</p>
+    <button onclick="showAdminPanel('edit', ${index})">✏ Edit</button>
+    <button onclick="showAdminPanel('delete', ${index})">🗑 Delete</button>
+</div>`;
+
+                stockPage.innerHTML += `
+Product Name: ${item.name}
+Quantity: ${item.quantity}
+Description: ${item.description}
+
+`;
+            });
+
+            // Store stock data for /stocks page
+            localStorage.setItem("stockPage", stockPage.innerText);
+        }
+
+        function addStockItem() {
+            let name = document.getElementById("stock-name").value;
+            let quantity = document.getElementById("stock-quantity").value;
+            let description = document.getElementById("stock-description").value;
+
+            if (name && quantity && description) {
+                let stockData = JSON.parse(localStorage.getItem("stock")) || [];
+                stockData.push({ name, quantity, description });
+                localStorage.setItem("stock", JSON.stringify(stockData));
+
+                loadStock();
+                document.getElementById("stock-name").value = "";
+                document.getElementById("stock-quantity").value = "";
+                document.getElementById("stock-description").value = "";
+                document.getElementById("admin-panel").style.display = "none";
+            } else {
+                alert("Please fill all fields!");
+            }
+        }
+
+        function editStock(stockId) {
+            let stockData = JSON.parse(localStorage.getItem("stock"));
+            let item = stockData[stockId];
+
+            let newName = prompt("Edit Product Name:", item.name);
+            let newQuantity = prompt("Edit Quantity:", item.quantity);
+            let newDescription = prompt("Edit Description:", item.description);
+
+            if (newName && newQuantity && newDescription) {
+                stockData[stockId] = { name: newName, quantity: newQuantity, description: newDescription };
+                localStorage.setItem("stock", JSON.stringify(stockData));
+                loadStock();
+            }
+        }
+
+        function deleteStock(stockId) {
+            let stockData = JSON.parse(localStorage.getItem("stock"));
+            stockData.splice(stockId, 1);
+            localStorage.setItem("stock", JSON.stringify(stockData));
+            loadStock();
+        }
+    </script>
+</head>
+<body>
+    <h1>📦 Available Stock</h1>
+    
+    <div id="stock-data">
+        <!-- Stock items will be loaded here from localStorage -->
+    </div>
+
+    <button onclick="showAdminPanel('add')">🔒 Admin Panel</button>
+
+    <div id="admin-panel" style="display:none; margin-top:20px;">
+        <h2>Admin Panel</h2>
+        <label>Product Name:</label>
+        <input type="text" id="stock-name">
+        <br>
+        <label>Quantity:</label>
+        <input type="text" id="stock-quantity">
+        <br>
+        <label>Description:</label>
+        <input type="text" id="stock-description">
+        <br>
+        <button onclick="addStockItem()">➕ Add Stock</button>
+    </div>
+
+    <pre id="stock-page" style="display:none;"></pre>
+</body>
+</html>
