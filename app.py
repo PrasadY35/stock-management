@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, send_file, request, redirect
 import csv
+import os
 
 app = Flask(__name__)
 
-# CSV File Path
 STOCK_FILE = 'stock.csv'
 
 # Initialize CSV if it doesn't exist
@@ -16,7 +16,7 @@ except FileExistsError:
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_file('index.html')  # Serve from main directory
 
 @app.route('/add_stock', methods=['POST'])
 def add_stock():
@@ -38,8 +38,17 @@ def stocks():
             data = list(reader)
     except FileNotFoundError:
         data = [["No Data", "No Data", "No Data"]]
+
+    with open("stocks.html", "r") as file:
+        html_template = file.read()
+
+    table_rows = ""
+    for row in data[1:]:
+        table_rows += f"<tr><td>{row[0]}</td><td>{row[1]}</td><td>{row[2]}</td></tr>"
     
-    return render_template('stocks.html', data=data)
+    html_template = html_template.replace("<!-- DATA_PLACEHOLDER -->", table_rows)
+    return html_template
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
