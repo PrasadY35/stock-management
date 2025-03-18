@@ -1,11 +1,10 @@
-from flask import Flask, render_template
-import os
+from flask import Flask, send_file
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return send_file('index.html')
 
 @app.route('/stocks')
 def show_stock():
@@ -21,5 +20,6 @@ Description: Phosphate-rich fertilizer for crops
     return f"<pre>{stock_data}</pre>"
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8080))  # Use Railway's dynamic port
+    import os
+    port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, host="0.0.0.0", port=port)
