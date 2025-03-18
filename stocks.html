@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock Page</title>
+</head>
+<body>
+  <h1>📦 Available Stock - /stocks</h1>
+  <pre id="stock-page"></pre>
+  <button onclick="window.location.href='/'">🏠 Go to Home</button>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const stockData = localStorage.getItem("stockPage") || "No stock data available.";
+      document.getElementById("stock-page").innerText = stockData;
+    });
+  </script>
+</body>
+</html>
