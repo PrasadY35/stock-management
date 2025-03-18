@@ -3,18 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stock Page</title>
+  <title>Stock List</title>
 </head>
 <body>
-  <h1>📦 Available Stock - /stocks</h1>
-  <pre id="stock-page"></pre>
+  <h1>📊 Current Stock Data</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in data[1:] %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   <button onclick="window.location.href='/'">🏠 Go to Home</button>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const stockData = localStorage.getItem("stockPage") || "No stock data available.";
-      document.getElementById("stock-page").innerText = stockData;
-    });
-  </script>
 </body>
 </html>
