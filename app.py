@@ -23,7 +23,7 @@ Description: Phosphate-rich fertilizer for crops
 @app.route('/add_item', methods=['POST'])
 def add_item():
     # Your code to add item to the stock
-    return redirect(url_for('show_stock'))
+    return redirect(url_for('stocks.html'))
 
 if __name__ == '__main__':
     import os
