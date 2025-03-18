@@ -1,31 +1,45 @@
-from flask import Flask, send_file
-from flask import redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
+import csv
 
 app = Flask(__name__)
 
+# CSV File Path
+STOCK_FILE = 'stock.csv'
+
+# Initialize CSV if it doesn't exist
+try:
+    with open(STOCK_FILE, 'x', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Name", "Quantity", "Description"])
+except FileExistsError:
+    pass
+
 @app.route('/')
-def home():
-    return send_file('index.html')
+def index():
+    return render_template('index.html')
+
+@app.route('/add_stock', methods=['POST'])
+def add_stock():
+    name = request.form['name']
+    quantity = request.form['quantity']
+    description = request.form['description']
+
+    if name and quantity and description:
+        with open(STOCK_FILE, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([name, quantity, description])
+    return redirect('/stocks')
 
 @app.route('/stocks')
-def show_stock():
-    stock_data = """
-Product Name: Urea Fertilizer
-Quantity: 50 bags
-Description: High-quality nitrogen fertilizer
-
-Product Name: DAP Fertilizer
-Quantity: 30 bags
-Description: Phosphate-rich fertilizer for crops
-    """
-    return f"<pre>{stock_data}</pre>"
-
-@app.route('/add_item', methods=['POST'])
-def add_item():
-    # Your code to add item to the stock
-    return redirect(url_for('stocks.html'))
+def stocks():
+    try:
+        with open(STOCK_FILE, 'r') as file:
+            reader = csv.reader(file)
+            data = list(reader)
+    except FileNotFoundError:
+        data = [["No Data", "No Data", "No Data"]]
+    
+    return render_template('stocks.html', data=data)
 
 if __name__ == '__main__':
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True)
