@@ -1,4 +1,5 @@
 from flask import Flask, send_file
+from flask import redirect, url_for
 
 app = Flask(__name__)
 
@@ -18,6 +19,11 @@ Quantity: 30 bags
 Description: Phosphate-rich fertilizer for crops
     """
     return f"<pre>{stock_data}</pre>"
+
+@app.route('/add_item', methods=['POST'])
+def add_item():
+    # Your code to add item to the stock
+    return redirect(url_for('show_stock'))
 
 if __name__ == '__main__':
     import os
